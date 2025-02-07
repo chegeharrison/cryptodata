@@ -10,6 +10,7 @@ library(tseries)
 library(dplyr)
 library(forecast)
 library(fGarch)
+library(FinTS)
 
 # Read the dataset from Excel
 cryptodata2024data <- read_excel("Documents/labs/ftsa/cryptodata2024data.xlsx")
@@ -295,14 +296,12 @@ auto_arma_model$order
 # Residuals from the ARMA(0, 0, 2) model (auto.arima)
 residuals_arma <- auto_arma_model$residuals
 
-# Perform ARCH test for the first 10 lags
-arch_test_10 <- ArchTest(residuals_arma, lags = 10)
-print(arch_test_10)
+ArchTest(residuals_arma, lags = 10)
+lag_values <- seq(5, 40, by = 5)
+arch_results <- lapply(lag_values, function(lag) ArchTest(residuals_arma, lags = lag))
 
-# Perform ARCH test for every lag that is a multiple of 5 up to 40 lags
-arch_test_5_40 <- ArchTest(residuals_arma, lags = seq(5, 40, by = 5))
-print(arch_test_5_40)
-
-
+# Print results for each lag
+names(arch_results) <- paste0("Lag_", lag_values)
+arch_results
 
 
